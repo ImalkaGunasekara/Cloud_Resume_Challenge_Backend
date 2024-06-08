@@ -1,5 +1,5 @@
 import pytest
-from index import lambda_handler
+from ..index import lambda_handler
 
 def test_lambda_handler_error_handling():
     # Simulate an error condition by providing a non-existent table name
