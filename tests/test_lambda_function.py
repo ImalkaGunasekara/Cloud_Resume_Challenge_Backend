@@ -2,7 +2,7 @@ import json
 from unittest.mock import MagicMock, patch
 import pytest
 from decimal import Decimal
-from index import lambda_handler
+from ..index import lambda_handler
 
 
 @patch('index.boto3')
