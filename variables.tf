@@ -1,0 +1,3 @@
+variable "myregion" {}
+
+variable "accountId" {}
