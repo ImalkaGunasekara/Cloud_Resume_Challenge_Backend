@@ -1,30 +1,31 @@
 import json
-import boto3
-from decimal import Decimal
+from unittest.mock import MagicMock, patch
+import pytest
+from index import lambda_handler
 
-dynamodb = boto3.resource('dynamodb')
-table = dynamodb.Table('cloud-resume-tf') # Use your table name here
+@patch('index.boto3')
+def test_lambda_handler(mock_boto3):
+    # Mock DynamoDB resource and table
+    mock_dynamodb = MagicMock()
+    mock_table = MagicMock()
+    mock_dynamodb.resource.return_value.Table.return_value = mock_table
+    mock_boto3.resource.return_value = mock_dynamodb
 
-def lambda_handler(event, context):
-    try:
-        response = table.get_item(Key={'id': '0'})
-        if 'Item' not in response:
-            raise ValueError("Item with id '0' not found")
+    # Mock DynamoDB responses
+    mock_table.get_item.return_value = {'Item': {'views': 0}}
 
-        views = int(response['Item']['views'])  # Convert Decimal to int
-        views += 1
+    # Invoke Lambda handler
+    event = {}
+    context = {}
+    response = lambda_handler(event, context)
 
-        print(views)
+    # Check the response
+    assert response['statusCode'] == 200
+    assert response['body']['views'] == 1
 
-        table.put_item(Item={'id': '0', 'views': views})
+    # Check DynamoDB interactions
+    mock_table.get_item.assert_called_once_with(Key={'id': '0'})
+    mock_table.put_item.assert_called_once_with(Item={'id': '0', 'views': 1})
 
-        return {
-            'statusCode': 200,
-            'body': {'views': views}
-        }
-
-    except Exception as e:
-        return {
-            'statusCode': 500,
-            'body': json.dumps({'errorMessage': str(e)})
-        }
+if __name__ == '__main__':
+    pytest.main()
