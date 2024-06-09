@@ -29,7 +29,7 @@ jobs:
 
     - name: Run tests
       env:
-        PYTHONPATH: ${{ github.workspace }}
+        PYTHONPATH: ${{ github.workspace }} # github.workspace is the root directory of the repo. This indicates that all the modules needed for the test (index.py in this case) is in the directory
       run: |
         source venv/bin/activate
         pytest tests

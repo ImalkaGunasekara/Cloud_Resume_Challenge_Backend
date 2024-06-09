@@ -76,6 +76,10 @@ resource "aws_api_gateway_integration_response" "MyDemoIntegrationResponse" {
     "method.response.header.Access-Control-Allow-Origin" = "'*'" # This part is here because we are also allowing CORS at the bottom. Otherwise this part is not needed, if CORS are not getting enabled. 
     # You can change  the origins that you allow for CORS (like specific domain names).
   }
+
+  depends_on = [
+    aws_api_gateway_integration.example_integration # This is important
+  ]
 }
 
 # Here's why each is necessary:
